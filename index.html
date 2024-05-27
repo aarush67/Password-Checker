@@ -1,10 +1,8 @@
-google-site-verification: google80cf9b92918f4741.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="AvCww1dKzxLmecMNEJRG59el6q2QtGMtf_RB7NyUqxI" />
     <title>Password Strength Identifier</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -15,13 +13,13 @@ google-site-verification: google80cf9b92918f4741.html
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: #f0f2f5;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
         }
         .container {
             background: #fff;
             padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 400px;
             width: 100%;
@@ -29,17 +27,23 @@ google-site-verification: google80cf9b92918f4741.html
         h1 {
             margin-bottom: 1rem;
             color: #333;
+            font-size: 24px;
+            font-weight: bold;
         }
         .password-container {
             position: relative;
+            margin-bottom: 1rem;
         }
         input[type="password"], input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+    max-width: calc(100% - 50px); /* Adjust this value as needed */
+    padding: 10px 40px 10px 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border 0.3s ease;
+}
+        input[type="password"]:focus, input[type="text"]:focus {
+            border-color: #9b59b6;
         }
         .toggle-btn {
             position: absolute;
@@ -47,24 +51,28 @@ google-site-verification: google80cf9b92918f4741.html
             right: 10px;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #007bff;
+            color: #9b59b6;
+            font-size: 18px;
         }
         button {
+            width: 100%;
             padding: 10px;
-            margin: 10px 0;
+            margin-top: 1rem;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #9b59b6;
             color: white;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #8e44ad;
         }
         .strength {
             font-weight: bold;
             margin-top: 10px;
+            font-size: 18px;
         }
         .strength.very-weak { color: red; }
         .strength.weak { color: orange; }
@@ -75,7 +83,24 @@ google-site-verification: google80cf9b92918f4741.html
             margin-top: 5px;
             font-size: 14px;
             color: #555;
-            font-weight: bold; /* Added this line */
+            font-weight: bold;
+        }
+        .crack-time-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .crack-time-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .crack-time-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
         }
         .generate-password-container {
             margin-top: 20px;
@@ -97,6 +122,10 @@ google-site-verification: google80cf9b92918f4741.html
         </div>
         <p class="strength" id="strength"></p>
         <p class="strength-phrase" id="strengthPhrase"></p>
+        <div class="crack-time-container">
+            <div class="crack-time-title">Estimated Time to Crack:</div>
+            <div class="crack-time-value" id="crackTime"></div>
+        </div>
         <div class="generate-password-container">
             <p class="generate-password-text">Want a secure password? Click here to generate one:</p>
             <button onclick="generatePassword()">Generate Secure Password</button>
@@ -107,32 +136,23 @@ google-site-verification: google80cf9b92918f4741.html
         function checkPassword() {
             const password = document.getElementById('password').value;
             const result = zxcvbn(password);
-            const strengthText = [
-                'Very Weak',
-                'Weak',
-                'Moderate',
-                'Strong',
-                'Very Strong'
-            ];
+            const strengthText = ['Very Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong'];
             const strengthPhrases = [
                 "It's equivalent to leaving your front door wide open.",
                 "It's equivalent to closing your front door but leaving it unlocked",
                 "It's secure but could be stronger. Consider adding more unique characters.",
                 "It's a good password, but there's always room for improvement.",
-                "Your password is the equivalent of trying to break in to Fort Knox"
+                "Your password is the equivalent of trying to break into Fort Knox"
             ];
-            const strengthClasses = [
-                'very-weak',
-                'weak',
-                'moderate',
-                'strong',
-                'very-strong'
-            ];
+            const strengthClasses = ['very-weak', 'weak', 'moderate', 'strong', 'very-strong'];
             const strengthElement = document.getElementById('strength');
             const strengthPhraseElement = document.getElementById('strengthPhrase');
+            const crackTimeElement = document.getElementById('crackTime');
+
             strengthElement.innerText = `Strength: ${strengthText[result.score]}`;
             strengthElement.className = `strength ${strengthClasses[result.score]}`;
             strengthPhraseElement.innerText = strengthPhrases[result.score];
+            crackTimeElement.innerText = result.crack_times_display.offline_slow_hashing_1e4_per_second;
         }
 
         function togglePassword() {

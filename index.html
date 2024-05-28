@@ -95,7 +95,6 @@
         .crack-time-value {
             font-size: 18px;
             font-weight: bold;
-            color: #28a745;
         }
         .strength-meter {
             width: 100%;
@@ -109,19 +108,23 @@
             height: 100%;
             transition: width 0.3s ease;
         }
-        .weak {
+        .very-weak {
             background-color: red;
         }
-        .moderate {
+        .weak {
             background-color: orange;
         }
-        .strong {
+        .moderate {
             background-color: yellow;
+        }
+        .strong {
+            background-color: lightgreen;
         }
         .very-strong {
             background-color: green;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
 </head>
 <body>
     <div class="container">
@@ -140,36 +143,29 @@
             <div class="strength-meter-bar"></div>
         </div>
         <div class="generate-password-container">
-            <button onclick="generatePassword()">Generate Secure Password</button
-            </div>
+            <button onclick="generatePassword()">Generate Secure Password</button>
         </div>
     </div>
 
     <script>
         function checkPassword() {
             const password = document.getElementById('password').value;
+            const result = zxcvbn(password);
             const strengthElement = document.getElementById('strength');
             const strengthPhraseElement = document.getElementById('strengthPhrase');
             const crackTimeElement = document.getElementById('crackTime');
             const strengthMeter = document.querySelector('.strength-meter-bar');
 
-            // Calculate password strength
-            const strength = calculatePasswordStrength(password);
+            const strength = result.score * 25;
 
             // Update password strength text and visual representation
             updateStrengthIndicator(strength);
             strengthElement.innerText = `Strength: ${getStrengthText(strength)}`;
             strengthPhraseElement.innerText = getStrengthPhrase(strength);
-            crackTimeElement.innerText = getCrackTime(strength);
+            crackTimeElement.innerText = result.crack_times_display.offline_slow_hashing_1e4_per_second;
 
             // Update crack time color
             crackTimeElement.className = `crack-time-value ${getColorClass(strength)}`;
-        }
-
-        function calculatePasswordStrength(password) {
-            // This is a simplified method to calculate password strength
-            // You can use a more sophisticated algorithm for better accuracy
-            return Math.min(password.length / 20 * 100, 100); // Assuming longer passwords are stronger
         }
 
         function getStrengthText(strength) {
@@ -190,20 +186,8 @@
             } else if (strength < 80) {
                 return "It's a good password, but there's always room for improvement.";
             } else {
-                return "Your password is the equivalent of trying to break into Fort Knox and escaping without any injury or beeing seen.";
+                return "Your password is the equivalent of trying to break into Fort Knox and escaping without any injury.";
             }
-        }
-
-        function getCrackTime(strength) {
-            // Simulated crack time based on password strength
-            const crackTimes = [
-                "Instant", // Very Weak
-                "Minutes", // Weak
-                "Hours",   // Moderate
-                "Days",    // Strong
-                "Years"    // Very Strong
-            ];
-            return crackTimes[Math.min(Math.floor(strength / 20), 4)]; // Ensure it doesn't go out of bounds
         }
 
         function getColorClass(strength) {

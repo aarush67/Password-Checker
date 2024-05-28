@@ -178,6 +178,45 @@
         .very-strong {
             background-color: green;
         }
+
+        .generate-password-container {
+            margin-top: 20px;
+        }
+
+        button:active {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
 </head>
@@ -186,7 +225,9 @@
         <h1>Password Strength Identifier</h1>
         <div class="password-container">
             <input type="password" id="password" placeholder="Enter your password" oninput="checkPassword()">
-            <i class="fas fa-eye-slash toggle-btn" id="togglePassword" onclick="togglePassword()"></i>
+            <i class="fas fa-eye-slash toggle-btn tooltip" id="togglePassword" onclick="togglePassword()">
+                <span class="tooltiptext">Show/Hide Password</span>
+            </i>
         </div>
         <p class="strength" id="strength"></p>
         <p class="strength-phrase" id="strengthPhrase"></p>
@@ -247,10 +288,10 @@
 
         function getColorClass(strength) {
             return strength < 20 ? "very-weak" :
-                   strength < 40 ? "weak" :
-                   strength < 60 ? "moderate" :
-                   strength < 80 ? "strong" :
-                   "very-strong";
+                strength < 40 ? "weak" :
+                strength < 60 ? "moderate" :
+                strength < 80 ? "strong" :
+                "very-strong";
         }
 
         function updateStrengthIndicator(strength) {

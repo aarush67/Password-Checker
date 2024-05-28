@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             display: flex;
@@ -17,8 +17,9 @@
             margin: 0;
             background: linear-gradient(135deg, #667eea, #764ba2);
             overflow: hidden;
+            perspective: 1000px;
         }
-        
+
         .container {
             background: #fff;
             padding: 2rem;
@@ -28,11 +29,12 @@
             max-width: 400px;
             width: 100%;
             animation: fadeIn 1s ease-in-out;
+            transform: rotateY(15deg);
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.9) rotateY(0deg); }
+            to { opacity: 1; transform: scale(1) rotateY(15deg); }
         }
 
         h1 {
@@ -42,7 +44,7 @@
             font-weight: 700;
             animation: slideIn 1s ease-in-out;
         }
-        
+
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -52,7 +54,7 @@
             position: relative;
             margin-bottom: 1rem;
         }
-        
+
         input[type="password"], input[type="text"] {
             width: 100%;
             padding: 14px;
@@ -61,14 +63,16 @@
             font-size: 16px;
             transition: border 0.3s ease, box-shadow 0.3s ease;
             box-sizing: border-box;
+            background: linear-gradient(135deg, #f0f0f0, #ffffff);
         }
-        
+
         input[type="password"]:focus, input[type="text"]:focus {
             border-color: #764ba2;
             outline: none;
             box-shadow: 0 0 10px rgba(118, 75, 162, 0.5);
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
         }
-        
+
         .toggle-btn {
             position: absolute;
             top: 50%;
@@ -77,11 +81,12 @@
             cursor: pointer;
             color: #764ba2;
             font-size: 18px;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, transform 0.3s ease;
         }
-        
+
         .toggle-btn:hover {
             color: #5a3e89;
+            transform: scale(1.2);
         }
 
         button {
@@ -91,31 +96,34 @@
             border: none;
             border-radius: 8px;
             background-color: #764ba2;
+            background-image: linear-gradient(135deg, #764ba2, #667eea);
             color: white;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         button:hover {
             background-color: #5a3e89;
-            transform: translateY(-3px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .strength {
             font-weight: 500;
             margin-top: 10px;
             font-size: 18px;
             color: #333;
+            transition: color 0.3s ease;
         }
-        
+
         .strength-phrase {
             margin-top: 5px;
             font-size: 14px;
             color: #555;
             font-weight: 500;
         }
-        
+
         .crack-time-container {
             margin-top: 20px;
             padding: 15px;
@@ -123,18 +131,19 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .crack-time-title {
             font-size: 16px;
             font-weight: 700;
             color: #333;
         }
-        
+
         .crack-time-value {
             font-size: 18px;
             font-weight: 700;
+            transition: color 0.3s ease;
         }
-        
+
         .strength-meter {
             width: 100%;
             height: 12px;
@@ -142,29 +151,30 @@
             background-color: #ddd;
             border-radius: 6px;
             overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) inset;
         }
-        
+
         .strength-meter-bar {
             height: 100%;
-            transition: width 0.3s ease;
+            transition: width 0.3s ease, background-color 0.3s ease;
         }
-        
+
         .very-weak {
             background-color: red;
         }
-        
+
         .weak {
             background-color: orange;
         }
-        
+
         .moderate {
             background-color: yellow;
         }
-        
+
         .strong {
             background-color: lightgreen;
         }
-        
+
         .very-strong {
             background-color: green;
         }

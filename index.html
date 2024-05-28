@@ -35,13 +35,13 @@
             margin-bottom: 1rem;
         }
         input[type="password"], input[type="text"] {
-    max-width: calc(100% - 50px); /* Adjust this value as needed */
-    padding: 10px 40px 10px 10px;
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: border 0.3s ease;
-}
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
         input[type="password"]:focus, input[type="text"]:focus {
             border-color: #9b59b6;
         }
@@ -74,11 +74,6 @@
             margin-top: 10px;
             font-size: 18px;
         }
-        .strength.very-weak { color: red; }
-        .strength.weak { color: orange; }
-        .strength.moderate { color: yellow; }
-        .strength.strong { color: lightgreen; }
-        .strength.very-strong { color: green; }
         .strength-phrase {
             margin-top: 5px;
             font-size: 14px;
@@ -102,16 +97,31 @@
             font-weight: bold;
             color: #28a745;
         }
-        .generate-password-container {
-            margin-top: 20px;
+        .strength-meter {
+            width: 100%;
+            height: 10px;
+            margin-top: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
         }
-        .generate-password-text {
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #555;
+        .strength-meter-bar {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .weak {
+            background-color: red;
+        }
+        .moderate {
+            background-color: orange;
+        }
+        .strong {
+            background-color: yellow;
+        }
+        .very-strong {
+            background-color: green;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
 </head>
 <body>
     <div class="container">
@@ -126,33 +136,88 @@
             <div class="crack-time-title">Estimated Time to Crack:</div>
             <div class="crack-time-value" id="crackTime"></div>
         </div>
+        <div class="strength-meter" id="strengthMeter">
+            <div class="strength-meter-bar"></div>
+        </div>
         <div class="generate-password-container">
-            <p class="generate-password-text">Want a secure password? Click here to generate one:</p>
-            <button onclick="generatePassword()">Generate Secure Password</button>
+            <button onclick="generatePassword()">Generate Secure Password</button
+            </div>
         </div>
     </div>
 
     <script>
         function checkPassword() {
             const password = document.getElementById('password').value;
-            const result = zxcvbn(password);
-            const strengthText = ['Very Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong'];
-            const strengthPhrases = [
-                "It's equivalent to leaving your front door wide open.",
-                "It's equivalent to closing your front door but leaving it unlocked",
-                "It's secure but could be stronger. Consider adding more unique characters.",
-                "It's a good password, but there's always room for improvement.",
-                "Your password is the equivalent of trying to break into Fort Knox"
-            ];
-            const strengthClasses = ['very-weak', 'weak', 'moderate', 'strong', 'very-strong'];
             const strengthElement = document.getElementById('strength');
             const strengthPhraseElement = document.getElementById('strengthPhrase');
             const crackTimeElement = document.getElementById('crackTime');
+            const strengthMeter = document.querySelector('.strength-meter-bar');
 
-            strengthElement.innerText = `Strength: ${strengthText[result.score]}`;
-            strengthElement.className = `strength ${strengthClasses[result.score]}`;
-            strengthPhraseElement.innerText = strengthPhrases[result.score];
-            crackTimeElement.innerText = result.crack_times_display.offline_slow_hashing_1e4_per_second;
+            // Calculate password strength
+            const strength = calculatePasswordStrength(password);
+
+            // Update password strength text and visual representation
+            updateStrengthIndicator(strength);
+            strengthElement.innerText = `Strength: ${getStrengthText(strength)}`;
+            strengthPhraseElement.innerText = getStrengthPhrase(strength);
+            crackTimeElement.innerText = getCrackTime(strength);
+
+            // Update crack time color
+            crackTimeElement.className = `crack-time-value ${getColorClass(strength)}`;
+        }
+
+        function calculatePasswordStrength(password) {
+            // This is a simplified method to calculate password strength
+            // You can use a more sophisticated algorithm for better accuracy
+            return Math.min(password.length / 20 * 100, 100); // Assuming longer passwords are stronger
+        }
+
+        function getStrengthText(strength) {
+            if (strength < 20) return 'Very Weak';
+            else if (strength < 40) return 'Weak';
+            else if (strength < 60) return 'Moderate';
+            else if (strength < 80) return 'Strong';
+            else return 'Very Strong';
+        }
+
+        function getStrengthPhrase(strength) {
+            if (strength < 20) {
+                return "It's equivalent to leaving your front door wide open.";
+            } else if (strength < 40) {
+                return "It's equivalent to closing your front door but leaving it unlocked.";
+            } else if (strength < 60) {
+                return "It's secure but could be stronger. Consider adding more unique characters.";
+            } else if (strength < 80) {
+                return "It's a good password, but there's always room for improvement.";
+            } else {
+                return "Your password is the equivalent of trying to break into Fort Knox and escaping without any injury or beeing seen.";
+            }
+        }
+
+        function getCrackTime(strength) {
+            // Simulated crack time based on password strength
+            const crackTimes = [
+                "Instant", // Very Weak
+                "Minutes", // Weak
+                "Hours",   // Moderate
+                "Days",    // Strong
+                "Years"    // Very Strong
+            ];
+            return crackTimes[Math.min(Math.floor(strength / 20), 4)]; // Ensure it doesn't go out of bounds
+        }
+
+        function getColorClass(strength) {
+            return strength < 20 ? "very-weak" :
+                   strength < 40 ? "weak" :
+                   strength < 60 ? "moderate" :
+                   strength < 80 ? "strong" :
+                   "very-strong";
+        }
+
+        function updateStrengthIndicator(strength) {
+            const strengthMeter = document.querySelector('.strength-meter-bar');
+            strengthMeter.style.width = `${strength}%`;
+            strengthMeter.className = `strength-meter-bar ${getColorClass(strength)}`;
         }
 
         function togglePassword() {
